@@ -26,11 +26,16 @@ func (s *HTTPServer) initTemplates() error {
 	return nil
 }
 
-// Serve static files
+// pkg/server/server.go
 func (s *HTTPServer) serveStaticFiles() {
 	fs := http.FileServer(http.FS(assets))
-	s.Handle("/admin/static/", http.StripPrefix("/admin/static/",
-		fs))
+
+	// Serve admin static files
+	s.Handle("/admin/static/", http.StripPrefix("/admin/static/", fs))
+
+	// Serve HugeRTE files
+	s.Handle("/admin/hugerte/", http.StripPrefix("/admin/hugerte/",
+		http.FileServer(http.FS(assets))))
 }
 
 // Server represents the main web server interface
