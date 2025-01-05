@@ -1,0 +1,95 @@
+<!-- templates/admin/files.html -->
+{{define "head"}}
+<link rel="stylesheet" href="/admin/static/css/files.css">
+{{end}}
+
+{{define "content"}}
+<div class="file-manager">
+    <header class="file-manager-header">
+        <h1>File Manager</h1>
+        <div class="file-controls">
+            <button class="btn upload-btn" onclick="showUploadDialog()">
+                <svg class="icon"><!-- Upload icon SVG --></svg>
+                Upload
+            </button>
+            <button class="btn new-folder-btn" onclick="createFolder()">
+                <svg class="icon"><!-- Folder icon SVG --></svg>
+                New Folder
+            </button>
+        </div>
+    </header>
+
+    <nav class="breadcrumb">
+        <ol>
+            {{range .Breadcrumbs}}
+            <li><a href="{{.Path}}">{{.Name}}</a></li>
+            {{end}}
+        </ol>
+    </nav>
+
+    <div class="file-list">
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Size</th>
+                    <th>Modified</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{range .Files}}
+                <tr data-type="{{.Type}}" data-path="{{.Path}}">
+                    <td>
+                        <div class="file-name">
+                            <svg class="icon"><!-- File/Folder icon SVG --></svg>
+                            {{.Name}}
+                        </div>
+                    </td>
+                    <td>{{.Size}}</td>
+                    <td>{{.ModifiedTime}}</td>
+                    <td>
+                        <div class="file-actions">
+                            {{if eq .Type "file"}}
+                            <button onclick="editFile('{{.Path}}')" title="Edit">
+                                <svg class="icon"><!-- Edit icon SVG --></svg>
+                            </button>
+                            {{end}}
+                            <button onclick="renameItem('{{.Path}}')" title="Rename">
+                                <svg class="icon"><!-- Rename icon SVG --></svg>
+                            </button>
+                            <button onclick="deleteItem('{{.Path}}')" title="Delete">
+                                <svg class="icon"><!-- Delete icon SVG --></svg>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                {{end}}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Upload Dialog -->
+    <dialog id="upload-dialog" class="modal">
+        <form method="POST" enctype="multipart/form-data" action="/admin/files/upload">
+            <h2>Upload Files</h2>
+            <input type="hidden" name="path" value="{{.CurrentPath}}">
+            <div class="form-group">
+                <label for="files">Select Files</label>
+                <input type="file" id="files" name="files" multiple>
+            </div>
+            <div class="progress-bar" hidden>
+                <div class="progress"></div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" onclick="closeUploadDialog()">Cancel</button>
+                <button type="submit">Upload</button>
+            </div>
+        </form>
+    </dialog>
+</div>
+{{end}}
+
+{{define "scripts"}}
+<script src="/admin/static/js/filemanager.js"></script>
+{{end}}

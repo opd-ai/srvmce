@@ -1,0 +1,28 @@
+<!-- templates/admin/layout.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Title}} - Admin Panel</title>
+    <link rel="stylesheet" href="/admin/css/admin.css">
+    {{block "head" .}}{{end}}
+</head>
+<body>
+    <nav class="admin-nav">
+        <div class="logo">
+            <img src="/admin/img/logo.svg" alt="Logo">
+        </div>
+        <ul>
+            <li><a href="/admin/dashboard">Dashboard</a></li>
+            <li><a href="/admin/files">Files</a></li>
+            <li><a href="/admin/logout">Logout</a></li>
+        </ul>
+    </nav>
+    <main class="admin-content">
+        {{block "content" .}}{{end}}
+    </main>
+    <script src="/admin/js/admin.js"></script>
+    {{block "scripts" .}}{{end}}
+</body>
+</html>

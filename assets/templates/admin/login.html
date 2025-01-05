@@ -1,0 +1,20 @@
+<!-- templates/admin/login.html -->
+{{define "content"}}
+<div class="login-container">
+    <form method="POST" action="/admin/login">
+        <h1>Admin Login</h1>
+        {{if .Error}}
+        <div class="error">{{.Error}}</div>
+        {{end}}
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <button type="submit">Login</button>
+    </form>
+</div>
+{{end}}

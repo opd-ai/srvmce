@@ -1,0 +1,63 @@
+<!-- templates/admin/dashboard.html -->
+{{define "head"}}
+<link rel="stylesheet" href="/admin/static/css/dashboard.css">
+{{end}}
+
+{{define "content"}}
+<div class="dashboard">
+    <header class="dashboard-header">
+        <h1>Admin Dashboard</h1>
+        <div class="dashboard-stats">
+            <div class="stat-card">
+                <h3>Files</h3>
+                <p>{{.FileCount}}</p>
+            </div>
+            <div class="stat-card">
+                <h3>Storage Used</h3>
+                <p>{{.StorageUsed}}</p>
+            </div>
+            <div class="stat-card">
+                <h3>Last Backup</h3>
+                <p>{{.LastBackup}}</p>
+            </div>
+        </div>
+    </header>
+
+    <section class="quick-actions">
+        <h2>Quick Actions</h2>
+        <div class="action-buttons">
+            <a href="/admin/files/upload" class="btn">Upload Files</a>
+            <a href="/admin/files" class="btn">Manage Files</a>
+            <button class="btn" onclick="triggerBackup()">Create Backup</button>
+        </div>
+    </section>
+
+    <section class="recent-activity">
+        <h2>Recent Activity</h2>
+        <table class="activity-table">
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>Action</th>
+                    <th>User</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{range .RecentActivity}}
+                <tr>
+                    <td>{{.Timestamp}}</td>
+                    <td>{{.Action}}</td>
+                    <td>{{.User}}</td>
+                    <td>{{.Details}}</td>
+                </tr>
+                {{end}}
+            </tbody>
+        </table>
+    </section>
+</div>
+{{end}}
+
+{{define "scripts"}}
+<script src="/admin/static/js/dashboard.js"></script>
+{{end}}

@@ -1,0 +1,11 @@
+<!-- templates/errors/500.html -->
+{{define "content"}}
+<div class="error-page">
+    <h1>500 - Server Error</h1>
+    <p>Something went wrong on our end. Please try again later.</p>
+    <div class="error-actions">
+        <a href="/admin/dashboard" class="btn">Go to Dashboard</a>
+        <a href="javascript:history.back()" class="btn">Go Back</a>
+    </div>
+</div>
+{{end}}

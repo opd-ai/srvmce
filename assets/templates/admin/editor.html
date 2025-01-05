@@ -1,0 +1,63 @@
+<!-- templates/admin/editor.html -->
+{{define "head"}}
+<link rel="stylesheet" href="/admin/static/css/editor.css">
+<script src="https://cdn.tiny.cloud/1/{{.TinyMCEKey}}/tinymce/6/tinymce.min.js"></script>
+{{end}}
+
+{{define "content"}}
+<div class="editor-container">
+    <header class="editor-header">
+        <h1>Editing: {{.Filename}}</h1>
+        <div class="editor-controls">
+            <button class="btn save-btn" onclick="saveFile()">
+                <svg class="icon"><!-- Save icon SVG --></svg>
+                Save
+            </button>
+            <button class="btn" onclick="window.location.href='/admin/files'">
+                <svg class="icon"><!-- Back icon SVG --></svg>
+                Back to Files
+            </button>
+        </div>
+    </header>
+
+    <div class="editor-type-selector">
+        <select id="editor-type" onchange="switchEditor(this.value)">
+            <option value="text" {{if eq .EditorType "text"}}selected{{end}}>Plain Text</option>
+            <option value="code" {{if eq .EditorType "code"}}selected{{end}}>Code</option>
+            <option value="rich" {{if eq .EditorType "rich"}}selected{{end}}>Rich Text</option>
+        </select>
+    </div>
+
+    <div class="editor-wrapper">
+        <!-- Plain Text Editor -->
+        <textarea id="text-editor" {{if ne .EditorType "text"}}hidden{{end}}>{{.Content}}</textarea>
+
+        <!-- Code Editor -->
+        <div id="code-editor" {{if ne .EditorType "code"}}hidden{{end}}></div>
+
+        <!-- Rich Text Editor (TinyMCE) -->
+        <textarea id="rich-editor" {{if ne .EditorType "rich"}}hidden{{end}}>{{.Content}}</textarea>
+    </div>
+
+    <div class="editor-status">
+        <span class="file-info">{{.FileInfo}}</span>
+        <span class="save-status"></span>
+    </div>
+</div>
+{{end}}
+
+{{define "scripts"}}
+<script src="/admin/static/js/editor.js"></script>
+{{if eq .EditorType "code"}}
+<script src="/admin/static/js/monaco-editor/min/vs/loader.js"></script>
+{{end}}
+<script>
+    initEditor({
+        type: '{{.EditorType}}',
+        path: '{{.FilePath}}',
+        language: '{{.Language}}',
+        readOnly: {{.ReadOnly}},
+        autoSave: {{.AutoSave}},
+    });
+</script>
+{{end}}
