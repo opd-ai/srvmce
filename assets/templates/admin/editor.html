@@ -1,7 +1,9 @@
 <!-- templates/admin/editor.html -->
 {{define "head"}}
 <link rel="stylesheet" href="/admin/static/css/editor.css">
-<script src="/admin/static/js/hugerte/hugerte.min.js"></script>
+<link rel="stylesheet" href="/admin/hugerte/hugerte.min.css">
+<link rel="stylesheet" href="/admin/hugerte/themes/default.css">
+<script src="/admin/hugerte/hugerte.min.js"></script>
 {{end}}
 
 {{define "content"}}
@@ -29,35 +31,96 @@
     </div>
 
     <div class="editor-wrapper">
-        <!-- Plain Text Editor -->
         <textarea id="text-editor" {{if ne .EditorType "text"}}hidden{{end}}>{{.Content}}</textarea>
-
-        <!-- Code Editor -->
         <div id="code-editor" {{if ne .EditorType "code"}}hidden{{end}}></div>
-
-        <!-- Rich Text Editor (TinyMCE) -->
-        <textarea id="rich-editor" {{if ne .EditorType "rich"}}hidden{{end}}>{{.Content}}</textarea>
-    </div>
-
-    <div class="editor-status">
-        <span class="file-info">{{.FileInfo}}</span>
-        <span class="save-status"></span>
+        <div id="rich-editor" {{if ne .EditorType "rich"}}hidden{{end}}>{{.Content}}</div>
     </div>
 </div>
 {{end}}
 
 {{define "scripts"}}
-<script src="/admin/static/js/editor.js"></script>
-{{if eq .EditorType "code"}}
-<script src="/admin/static/js/monaco-editor/min/vs/loader.js"></script>
-{{end}}
 <script>
-    initEditor({
-        type: '{{.EditorType}}',
-        path: '{{.FilePath}}',
-        language: '{{.Language}}',
-        readOnly: {{.ReadOnly}},
-        autoSave: {{.AutoSave}},
+document.addEventListener('DOMContentLoaded', function() {
+    const editorType = '{{.EditorType}}';
+    const editorConfig = {
+        selector: '#rich-editor',
+        theme: 'default',
+        plugins: ['image', 'code', 'table'],
+        toolbar: [
+            'undo redo | formatselect | bold italic | alignleft aligncenter alignright | bullist numlist | link image | code'
+        ],
+        height: 500,
+        autosave: {
+            interval: '30s'
+        },
+        images_upload_handler: function (blobInfo, success, failure) {
+            // Implement file upload handler
+            uploadFile(blobInfo.blob())
+                .then(success)
+                .catch(failure);
+        }
+    };
+
+    let hugeEditor;
+
+    function initializeEditor() {
+        if (editorType === 'rich') {
+            hugeEditor = new HugeRTE(editorConfig);
+        }
+    }
+
+    function switchEditor(type) {
+        document.getElementById('text-editor').hidden = type !== 'text';
+        document.getElementById('code-editor').hidden = type !== 'code';
+        document.getElementById('rich-editor').hidden = type !== 'rich';
+
+        if (type === 'rich' && !hugeEditor) {
+            initializeEditor();
+        }
+    }
+
+    initializeEditor();
+});
+
+async function uploadFile(blob) {
+    const formData = new FormData();
+    formData.append('file', blob);
+
+    const response = await fetch('/admin/files/upload', {
+        method: 'POST',
+        body: formData
     });
+
+    if (!response.ok) {
+        throw new Error('Upload failed');
+    }
+
+    const data = await response.json();
+    return data.url;
+}
+
+async function saveFile() {
+    const content = document.querySelector('#rich-editor').innerHTML;
+    try {
+        const response = await fetch('/admin/files/save', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                path: '{{.FilePath}}',
+                content: content
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error('Save failed');
+        }
+
+        showNotification('File saved successfully');
+    } catch (error) {
+        showNotification('Failed to save file', 'error');
+    }
+}
 </script>
 {{end}}
