@@ -29,8 +29,6 @@ func (s *HTTPServer) initTemplates() error {
 // Serve static files
 func (s *HTTPServer) serveStaticFiles() {
 	fs := http.FileServer(http.FS(assets))
-	// s.Handle("/admin/static/", http.StripPrefix("/admin/static/",
-	//	http.FileServer(http.FS(assets))))
 	s.Handle("/admin/static/", http.StripPrefix("/admin/static/",
 		fs))
 }
