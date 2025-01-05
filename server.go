@@ -11,7 +11,7 @@ import (
 	"sync"
 )
 
-//go:embed assets/templates/* assets/static/admin/*
+//go:embed assets/templates/* assets/static/admin/* assets/hugerte/*
 var assets embed.FS
 
 // Initialize templates
