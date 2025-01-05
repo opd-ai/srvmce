@@ -60,7 +60,6 @@ type RouterGroup interface {
 type Config struct {
 	RootDir        string
 	AdminPath      string
-	TinyMCEKey     string
 	AdminUser      string
 	AdminPassword  string
 	AdminTemplates *template.Template
